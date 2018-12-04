@@ -1,33 +1,28 @@
 import fs from 'fs';
 import readline from 'readline';
 
-let twos = 0;
-let threes = 0;
 
-const rl = readline.createInterface({
-  input: fs.createReadStream('./data')
-});
+fs.readFile('./data', 'utf8', (err, data) => {
+  let parsedData;
 
-rl.on('line', line => {
-  const map = {};
-  for (let i = 0; i < line.length; i++) {
-    const current = line[i];
-    if (map[current]) {
-      map[current]++;
-    } else {
-      map[current] = 1;
-    }
-  }
-  const values = Object.values(map);
-  if (values.indexOf(2) > -1) {
-    twos++;
+  if (err) {
+    console.error(err)
+    return
   }
 
-  if (values.indexOf(3) > -1) {
-    threes++;
-  }
-});
+  parsedData = data.split('\n');
 
-rl.on('close', () => {
-  console.log(twos * threes);
-});
+  for (let i = 1; i < parsedData[0].length - 1; i++) {
+    const current = parsedData.map(id => `${id.slice(0, i - 1)}${id.slice(i)}`);
+
+    let tracker = {};
+
+    current.forEach(id => {
+      if (tracker[id]) {
+        console.log(id, i);
+      } else {
+        tracker[id] = true;
+      }
+    })
+  }
+})
